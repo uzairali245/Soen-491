@@ -6,7 +6,7 @@ const WATCHMODE_API_KEY = '3695c2b148msh1fbf157fe452eb6p1fb5c8jsn00cd86f2c351';
 
 const fetchAndStoreMovies = async (req, res) => {
     try {
-        const discoverResponse = await axios.get(`https://api.themoviedb.org/3/discover/movie?page=2`, {
+        const discoverResponse = await axios.get(`https://api.themoviedb.org/3/discover/movie?page=6`, {
             headers: {Authorization: `Bearer ${TMDB_API_KEY}`}
         });
         const movies = discoverResponse.data.results;
@@ -285,4 +285,42 @@ const insertMovieData = async (movie, watchmodeId) => {
     }
 };
 
-module.exports = {fetchAndStoreMovies}
+const rateMovie = async (req, res) => {
+    const { movieId, rating } = req.body;
+    const userId = req.user.userId; // From authenticateToken middleware
+
+    if (!movieId || !rating || rating < 0 || rating > 10) {
+        return res.status(400).json({ error: 'Valid movieId and rating (0-10) required' });
+    }
+
+    try {
+        await pool.query(
+            'INSERT INTO user_ratings (user_id, movie_id, rating) VALUES ($1, $2, $3) ON CONFLICT (user_id, movie_id) DO UPDATE SET rating = $3',
+            [userId, movieId, rating]
+        );
+        res.status(201).json({ message: 'Rating saved' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to save rating' });
+    }
+};
+
+const addToFavorites = async (req, res) => {
+    const { movieId } = req.body;
+    const userId = req.user.userId; // From authenticateToken middleware
+
+    if (!movieId) {
+        return res.status(400).json({ error: 'movieId is required' });
+    }
+
+    try {
+        await pool.query(
+            'INSERT INTO user_favorites (user_id, movie_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
+            [userId, movieId]
+        );
+        res.status(201).json({ message: 'Movie added to favorites' });
+    } catch (error) {
+        console.error('Error adding to favorites:', error);
+        res.status(500).json({ error: 'Failed to add movie to favorites' });
+    }
+};
+module.exports = {fetchAndStoreMovies, rateMovie, addToFavorites}
