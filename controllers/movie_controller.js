@@ -69,7 +69,8 @@ const insertMovieData = async (movie, watchmodeId) => {
             spoken_languages,
             production_countries,
             credits,
-            keywords
+            keywords,
+            poster_path
         } = movie;
 
         const release_year = release_date ? parseInt(release_date.split('-')[0]) : null;
@@ -77,11 +78,11 @@ const insertMovieData = async (movie, watchmodeId) => {
 
         // Insert movie into the movies table
         const movieResult = await pool.query(
-            `INSERT INTO movies (tmdb_id, imdb_id, title, plot, release_year, viewers_rating)
-             VALUES ($1, $2, $3, $4, $5, $6)
+            `INSERT INTO movies (tmdb_id, imdb_id, title, plot, release_year, viewers_rating, poster_path)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)
              ON CONFLICT (tmdb_id) DO NOTHING
              RETURNING movie_id`,
-            [tmdb_id, imdb_id, title, plot, release_year, viewers_rating]
+            [tmdb_id, imdb_id, title, plot, release_year, viewers_rating, poster_path]
         );
 
         const movie_id = movieResult.rows[0]?.movie_id;
