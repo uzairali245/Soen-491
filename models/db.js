@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS movies (
     title VARCHAR(50),
     plot TEXT,
     viewers_rating NUMERIC(3,1) CHECK (viewers_rating >= 0 AND viewers_rating <= 10),
-    release_year INTEGER
+    release_year INTEGER,
+    poster_path TEXT
 );
 
 -- Countries Table
