@@ -9,12 +9,14 @@ function classNames(...classes) {
 
 export default function Navbar() {
     const navigate = useNavigate();
-    const isLoggedIn = !!localStorage.getItem('token'); // Check if token exists
+    const isLoggedIn = !!localStorage.getItem('token');
 
     const navigation = [
         { name: 'Movies', href: '/movies', current: window.location.pathname === '/movies' },
         ...(isLoggedIn
-            ? []
+            ? [
+                { name: 'Recommendations', href: '/recommendations', current: window.location.pathname === '/recommendations' },
+            ]
             : [
                 { name: 'Sign Up', href: '/signup', current: window.location.pathname === '/signup' },
                 { name: 'Sign In', href: '/login', current: window.location.pathname === '/login' },
@@ -84,6 +86,14 @@ export default function Navbar() {
                             >
                                 {isLoggedIn ? (
                                     <>
+                                        <MenuItem>
+                                            <a
+                                                href="/profile"
+                                                className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                                            >
+                                                Your Profile
+                                            </a>
+                                        </MenuItem>
                                         <MenuItem>
                                             <button
                                                 onClick={handleSignOut}
