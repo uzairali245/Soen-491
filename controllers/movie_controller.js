@@ -323,4 +323,15 @@ const addToFavorites = async (req, res) => {
         res.status(500).json({ error: 'Failed to add movie to favorites' });
     }
 };
-module.exports = {fetchAndStoreMovies, rateMovie, addToFavorites}
+
+const listAllMovies = async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM movies');
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error listing movies:', error);
+        res.status(500).json({ error: 'Failed to list movies' });
+    }
+};
+
+module.exports = {fetchAndStoreMovies, rateMovie, addToFavorites,listAllMovies}

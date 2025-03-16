@@ -6,6 +6,8 @@ const {initDb} = require("./models/db");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const cors = require('cors');
+app.use(cors({ origin: 'http://localhost:3001' }));
 app.use(express.json());
 
 // Use the movie routes
