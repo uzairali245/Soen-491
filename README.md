@@ -1,4 +1,4 @@
-# Movie Recommendation System
+# SOEN-491 Movie Recommendation System
 
 ## Overview
 
