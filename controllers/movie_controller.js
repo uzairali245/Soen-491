@@ -6,7 +6,7 @@ const WATCHMODE_API_KEY = '3695c2b148msh1fbf157fe452eb6p1fb5c8jsn00cd86f2c351';
 
 const fetchAndStoreMovies = async (req, res) => {
     try {
-        const discoverResponse = await axios.get(`https://api.themoviedb.org/3/discover/movie?page=6`, {
+        const discoverResponse = await axios.get(`https://api.themoviedb.org/3/discover/movie?page=10`, {
             headers: {Authorization: `Bearer ${TMDB_API_KEY}`}
         });
         const movies = discoverResponse.data.results;
@@ -76,7 +76,6 @@ const insertMovieData = async (movie, watchmodeId) => {
         const release_year = release_date ? parseInt(release_date.split('-')[0]) : null;
         const viewers_rating = vote_average;
 
-        // Insert movie into the movies table
         const movieResult = await pool.query(
             `INSERT INTO movies (tmdb_id, imdb_id, title, plot, release_year, viewers_rating, poster_path)
              VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -86,9 +85,8 @@ const insertMovieData = async (movie, watchmodeId) => {
         );
 
         const movie_id = movieResult.rows[0]?.movie_id;
-        if (!movie_id) return; // Skip if the movie already exists
+        if (!movie_id) return;
 
-        // Insert WatchMode ID (if available)
         if (watchmodeId) {
             await pool.query(
                 `UPDATE movies SET watchmode_id = $1 WHERE movie_id = $2`,
@@ -97,7 +95,6 @@ const insertMovieData = async (movie, watchmodeId) => {
         }
 
         // Insert genres
-        // console.log("Genres:", genres);
 
         for (const genre of genres) {
             // Check if genre exists in `genres` table
@@ -131,7 +128,6 @@ const insertMovieData = async (movie, watchmodeId) => {
         }
 
 
-        // console.log("countries", production_countries)
         // Insert production countries
         for (const country of production_countries) {
             // Try to retrieve the country_id if it already exists
@@ -195,7 +191,6 @@ const insertMovieData = async (movie, watchmodeId) => {
             }
         }
 
-// Insert actors
         for (const actor of credits.cast) {
             let actorResult = await pool.query(
                 `INSERT INTO actors (actor_id, actor_name)
@@ -223,7 +218,6 @@ const insertMovieData = async (movie, watchmodeId) => {
             }
         }
 
-// Insert directors
         for (const director of credits.crew) {
             let directorResult = await pool.query(
                 `INSERT INTO directors (director_id, director_name)
@@ -280,7 +274,6 @@ const insertMovieData = async (movie, watchmodeId) => {
         }
 
 
-        // console.log(`Inserted movie: ${title}`);
     } catch (error) {
         console.error(`Error inserting movie data: ${error.message}`);
     }

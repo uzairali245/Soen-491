@@ -6,7 +6,6 @@ require('dotenv').config();
 const saltRounds = 10;
 const jwtSecret = process.env.JWT_SECRET;
 
-// Signup
 const signup = async (req, res) => {
     const { username, email, password } = req.body;
 
@@ -45,7 +44,6 @@ const signup = async (req, res) => {
     }
 };
 
-// Login
 const login = async (req, res) => {
     const { email, password } = req.body;
 

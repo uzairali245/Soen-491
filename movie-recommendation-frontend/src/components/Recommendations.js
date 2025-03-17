@@ -29,7 +29,6 @@ export default function Recommendations() {
         fetchRecommendations();
     }, []);
 
-    // Handle like/unlike toggle
     const handleLikeToggle = async (movieId) => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -58,12 +57,10 @@ export default function Recommendations() {
         }
     };
 
-    // Handle rating change
     const handleRatingChange = (movieId, value) => {
         setRatings((prev) => ({ ...prev, [movieId]: value }));
     };
 
-    // Save rating
     const handleSaveRating = async (movieId) => {
         const token = localStorage.getItem('token');
         if (!token) {
